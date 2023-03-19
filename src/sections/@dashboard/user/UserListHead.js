@@ -31,6 +31,7 @@ export default function UserListHead({
   orderBy,
   rowCount,
   headLabel,
+  selectTab,
   numSelected,
   onRequestSort,
   onSelectAllClick,
@@ -42,17 +43,18 @@ export default function UserListHead({
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
+        {/* <TableCell padding="checkbox">
           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
           />
-        </TableCell>
+        </TableCell> */}
         {headLabel.map((headCell) => (
           <TableCell
+            width={headCell.width}
             key={headCell.id}
-            align={headCell.alignRight ? 'right' : 'left'}
+            align={headCell.alignCenter ? 'center' : 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
@@ -61,7 +63,7 @@ export default function UserListHead({
               direction={orderBy === headCell.id ? order : 'asc'}
               onClick={createSortHandler(headCell.id)}
             >
-              {headCell.label}
+              {headCell.label[selectTab]}
               {orderBy === headCell.id ? (
                 <Box sx={{ ...visuallyHidden }}>{order === 'desc' ? 'sorted descending' : 'sorted ascending'}</Box>
               ) : null}

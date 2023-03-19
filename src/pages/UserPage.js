@@ -1,7 +1,9 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 // @mui
 import {
   Card,
@@ -21,6 +23,9 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  Tabs,
+  Tab,
+  CardContent,
 } from '@mui/material';
 // components
 import Label from '../components/label';
@@ -29,17 +34,32 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
-import USERLIST from '../_mock/user';
+
 
 // ----------------------------------------------------------------------
-
+const USERLIST = {
+  selHanja : [
+    { id:'1', name:'첫째방',contents:[ '百 千 手 足 自 立 石' ] },
+    { id:'2', name:'둘째방',contents:['生 心 出 入 工 力 川' ] },
+    { id:'3', name:'셋째방',contents:['男 兄 金 天 江 目']  },
+  ],
+  bookHanja:[
+    { id:'1', name:'첫째방',contents:[ '학습, 학년, 선심, 정직, 활동', '규칙, 교실, 안전, 준비, 자세', '중요, 정리, 정확, 체육'] },
+    { id:'2', name:'둘째방',contents:['발음, 질문, 분명, 시, 문법', '상상, 장면, 실감, 체험, 역할, 민속' ] },
+    { id:'3', name:'셋째방',contents:['모형, 배열, 삼각형, 원, 부호', '신호, 변, 계산, 시계, 계획','시간, 식, 오전, 오후, 선','방법, 환경, 자연']  },
+  ],
+  ancientHanja:[
+    { id:'1', name:'첫째방',contents:[ '他山之石, 百發百中'] },
+    { id:'2', name:'둘째방',contents:['作心三日, 男女老少' ] },
+    { id:'3', name:'셋째방',contents:['此日彼日, 杜門不出']  },
+  ]
+}
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
-  { id: '' },
+  { id: 'name', label: '단원', alignCenter: true, width:100},
+  { id: 'contents', label: {sel:'선정한자', book:'교과서한자', ancient:'고사성어'}, alignRight: false },
+  // { id: 'role', label: '교과서한자', alignRight: false },
+  // { id: 'isVerified', label: '고사성어', alignRight: false },
+  // { id: 'status', label: '연습문제', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -74,6 +94,9 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function UserPage() {
+
+  const [value, setValue] = useState(0);
+
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -82,11 +105,19 @@ export default function UserPage() {
 
   const [selected, setSelected] = useState([]);
 
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('');
 
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [selectTab, setSelectTab] = useState('sel');  // sel : 선정한자 , book: 교과서한자 , ancient: 고사성어
+
+  const navigate = useNavigate();
+
+  const handleChange = (event, newValue) => {
+   if( newValue !== selectTab) setSelectTab(newValue)
+  };
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -142,43 +173,111 @@ export default function UserPage() {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const onClickContents = ( seq ) => {
+    navigate('/quiz', { replace: true });
+  }
+  // const onClickTab = ( tab ) => {
+  //   if( tab !== selectTab) setSelectTab(tab)
+  // }
 
-  const isNotFound = !filteredUsers.length && !!filterName;
-
+  const isNotFound = false;
   return (
     <>
       <Helmet>
         <title> User | Minimal UI </title>
       </Helmet>
 
-      <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+      <Container  style={{minWidth: 400, maxWidth:800}} >
+        {/* <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             User
           </Typography>
           <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             New User
           </Button>
-        </Stack>
+        </Stack> */}
+        <Tabs value={selectTab} onChange={handleChange} aria-label="disabled tabs example">
+          <Tab label="선정한자" value="sel"/>
+          <Tab label="교과서한자" value="book"/>
+          <Tab label="고사성어" value="ancient"/>
+          <Tab label="연습문제" disabled />
+        </Tabs>
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+        <CardContent>
+          {/* <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} /> */}
 
           <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
+            <TableContainer sx={{ minWidth: 300, maxWidth:800 }}>
               <Table>
                 <UserListHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
+                  selectTab={selectTab}
                   rowCount={USERLIST.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                {
+                    USERLIST[`${selectTab}Hanja`]?.map( (row, idx) => {
+                    const { id, name, contents } = row;
+                        return(
+                          <TableRow  key={id} tabIndex={-1} >
+                        {/* <TableCell padding="checkbox">
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
+                        </TableCell> */}
+
+                        
+                          
+                            <TableCell component="th" align='center' scope="row" padding="none" >
+                            <Stack direction="row"  spacing={2}>
+                              {/* <Avatar alt={name} src={avatarUrl} /> */}
+                              <Typography  variant="subtitle2" noWrap>
+                               { name }
+                              </Typography>
+                            </Stack>
+                          </TableCell>
+                          
+                        
+
+                        <TableCell  align="left">
+                        {
+                          row.contents.map(  (cont, idx) => 
+                              <Stack direction="row" key={idx} style={{borderBottom: '1px solid black'}} spacing={2}>
+                              {/* <Avatar alt={name} src={avatarUrl} /> */}
+                              <Typography variant="subtitle2" onClick={()=>onClickContents()}
+                              noWrap fontSize="1.2rem" fontWeight="bold">
+                              <br/> &nbsp;&nbsp;<span  style={{cursor:'pointer'}} >{cont}</span><br/><br/>
+                              </Typography>
+                            </Stack>
+                            
+                          )
+                        }
+                            
+                        </TableCell>
+
+                        {/* <TableCell align="left">{role}</TableCell>
+
+                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+
+                        <TableCell align="left">
+                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
+                        </TableCell> */}
+
+                        {/* <TableCell align="right">
+                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                            <Iconify icon={'eva:more-vertical-fill'} />
+                          </IconButton>
+                        </TableCell> */}
+                      </TableRow>
+                        )
+                    } )
+                  }
+                 
+                  {/* {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, idx) => {
                     const { id, name, role, status, company, avatarUrl, isVerified } = row;
                     const selectedUser = selected.indexOf(name) !== -1;
 
@@ -188,14 +287,18 @@ export default function UserPage() {
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
                         </TableCell>
 
-                        <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell>
+                        
+                          
+                            <TableCell component="th" scope="row" padding="none" >
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                              <Avatar alt={name} src={avatarUrl} />
+                              <Typography variant="subtitle2" noWrap>
+                                &nbsp;&nbsp;{ name }
+                              </Typography>
+                            </Stack>
+                          </TableCell>
+                          
+                        
 
                         <TableCell align="left">{company}</TableCell>
 
@@ -214,7 +317,7 @@ export default function UserPage() {
                         </TableCell>
                       </TableRow>
                     );
-                  })}
+                  })} */}
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
@@ -248,16 +351,7 @@ export default function UserPage() {
               </Table>
             </TableContainer>
           </Scrollbar>
-
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={USERLIST.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+          </CardContent>
         </Card>
       </Container>
 

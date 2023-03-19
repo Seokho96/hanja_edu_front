@@ -9,6 +9,8 @@ import GradeIcon from '@mui/icons-material/Grade';
 import BadgeIcon from '@mui/icons-material/Badge';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 import MenuIcon from '@mui/icons-material/Menu';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 // ----------------------------------------------------------------------
 
 // const Iconify = forwardRef(({ icon }, ref) => (
@@ -22,6 +24,8 @@ const Iconify = forwardRef(({ icon }, ref) => {
   if( icon === 'name') return ( <BadgeIcon />)
   if( icon === 'grade') return ( <GradeIcon />)
   if(icon === 'level')return (<MilitaryTechIcon />)
+  if(icon === 'eyeFill')return (<VisibilityIcon />)
+  if(icon === 'eyeOff')return (<VisibilityOffIcon />)
 
   return (<MenuIcon/>)
 });
