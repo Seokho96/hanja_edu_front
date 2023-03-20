@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 // @mui
 import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox, FormControlLabel } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { requests, headerForm } from "../../../agent/requets";
+import { getConfig, replaceStage } from "../../../utils/common";
+
 // components
 import Iconify from '../../../components/iconify';
 
@@ -16,6 +20,12 @@ export default function LoginForm() {
   const handleClick = () => {
     navigate('/home', { replace: true });
   };
+
+  const onClickLogin = () => {
+    requests.get('/contents/hotel')
+    // console.log(window);
+    // console.log(getConfig("SUCCESS_API"));
+  }
 
   return (
     <>
@@ -39,13 +49,13 @@ export default function LoginForm() {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-        <FormControlLabel  control={<Checkbox name="remember"   />} label="아이디 저장" />
+        <FormControlLabel control={<Checkbox name="remember" />} label="아이디 저장" />
         {/* <Link variant="subtitle2" underline="hover">
           Forgot password?
         </Link> */}
       </Stack>
 
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick}>
+      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={onClickLogin}>
         로그인
       </LoadingButton>
     </>
