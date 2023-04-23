@@ -1,9 +1,10 @@
 import Quiz from "./quiz";
+import User from "./user";
 
 
 export default {
   Quiz,
-
+  User,
 
   getSessionInfo: () => {
     const info = {};

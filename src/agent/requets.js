@@ -1,87 +1,75 @@
-import axios from "axios";
-import Alert from 'sweetalert2';
-import { getConfig, replaceStage } from "../utils/common";
+import axios from 'axios'
 
-export const headerForm = {
-  "Content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-  Accept: "*/*",
-};
+const instance = axios.create({
+  baseURL: `${process.env.REACT_APP_SERVER  }/api`,
+  withCredentials: true,
+  
+})
 
-// 토큰 추가
-const configToken = function (config) {
-  const token = window.sessionStorage.getItem("accessToken");
+instance.defaults.headers.common['Content-Type'] = 'application/json';
+
+
+/*
+    1. 요청 인터셉터를 작성합니다.
+    2개의 콜백 함수를 받습니다.
+
+    1) 요청 바로 직전 - 인자값: axios config
+    2) 요청 에러 - 인자값: error
+*/
+instance.interceptors.request.use(
+  (config) => {
+    // 요청 바로 직전
+    // axios 설정값에 대해 작성합니다.
+    // console.log('axios.js request : ', config)
+
+    // const users = useUsersStore()
+    // const { grantType, accessToken } = users.getUserInfo
+
+    // if (users.getUserInfo?.accessToken) {
+    //   config.headers['Authorization'] = grantType + ' ' + accessToken
+    // }
+
+    const token = window.sessionStorage.getItem("accessToken");
+    const grantType = window.sessionStorage.getItem("grantType");
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-
-    // 장부 진입 이후일 때 header에 장부번호 추가
-    const biSeq = window.sessionStorage.getItem("biSeq");
-
-    if (biSeq) {
-      config.headers.biSeq = biSeq;
+    config.headers.Authorization = `${grantType  } ${  token}`
+  }
+     return config 
     }
-  }
+  ,
+  (error) => 
+    // 요청 에러 처리를 작성합니다.
+     Promise.reject(error)
+  
+)
 
+/*
+    2. 응답 인터셉터를 작성합니다.
+    2개의 콜백 함수를 받습니다.
 
-  return config;
-};
+    1) 응답 정상 - 인자값: http response
+    2) 응답 에러 - 인자값: http error
+*/
+instance.interceptors.response.use(
+  (res) => 
+    /*
+        http status가 200인 경우
+        응답 바로 직전에 대해 작성합니다. 
+        .then() 으로 이어집니다.
+    */
+    // console.log('axios.js response : ', res)
+     res
+  ,
+  (error) => 
+    /*
+        http status가 200이 아닌 경우
+        응답 에러 처리를 작성합니다.
+        .catch() 으로 이어집니다.    
+    */
+    
+     Promise.reject(error)
+  
+)
 
-// 요청 오류
-const reqError = function (error) {
-  const { method, url, params, data, headers } = error.config;
-
-  // sentry log 기록용
-  // Sentry.setContext("API Request Detail", {
-  //   method,
-  //   url,
-  //   params,
-  //   data,
-  //   headers,
-  // });
-
-  return Promise.reject(error);
-};
-
-// 상태코드 200인 경우
-const repSuccess = function (rep) {
-
-  const d = rep.data;
-
-  if (d.result === false) {
-    if (d.code === "3002") {
-      replaceStage("/m/choice");
-      return;
-    }
-
-    Alert.info(d.message);
-  }
-
-  // eslint-disable-next-line consistent-return
-  return d;
-};
-
-const repError = function (error) {
-
-  const d = error.response.data;
-
-  if (d.result === false) {
-    Alert.info(d.message);
-  }
-
-  const { data, status } = error.response;
-
-  // sentry log 기록용
-  // Sentry.setContext("API Response Detail", {
-  //   status,
-  //   data,
-  // });
-
-  return Promise.reject(error);
-};
-
-// 토큰 요청
-export const requests = axios.create({
-  baseURL: process.env.REACT_APP_SERVER,
-});
-
-requests.interceptors.request.use();
-requests.interceptors.response.use(repSuccess, repError);
+// 생성한 인스턴스를 익스포트 합니다.
+export default instance

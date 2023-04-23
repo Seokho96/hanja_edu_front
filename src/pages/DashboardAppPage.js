@@ -1,5 +1,7 @@
+import {  useSelector } from "react-redux";
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
+
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
@@ -17,11 +19,19 @@ import {
   AppCurrentSubject,
   AppConversionRates,
 } from '../sections/@dashboard/app';
+import agent from '../agent';
 
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
+  const userInfo =  useSelector((state) => state.member.userInfo);
   const theme = useTheme();
+
+  const onClickTest = () => {
+    // agent.Quiz.test();
+    console.log(userInfo);
+    agent.User.getUserInfo(userInfo);
+  }
 
   return (
     <>
@@ -35,7 +45,7 @@ export default function DashboardAppPage() {
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={3} onClick={()=>onClickTest()}>
             <AppWidgetSummary title="학교" total={'부개초등학교'} icon={'school'} />
           </Grid>
 

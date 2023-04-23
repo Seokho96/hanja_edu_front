@@ -31,6 +31,7 @@ export default function Router() {
       element: <LoginPage />,
     },
     {
+      path:"error",
       element: <SimpleLayout />,
       children: [
         { element: <Navigate to="/home" />, index: true },

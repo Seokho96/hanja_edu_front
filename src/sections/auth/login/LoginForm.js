@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { useDispatch, useSelector } from "react-redux";
 // @mui
 import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox, FormControlLabel } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { requests, headerForm } from "../../../agent/requets";
+import { LOGIN } from '../../../reducers/member';
+import Alert from '../../../utils/Alert';
+import agent from "../../../agent";
 import { getConfig, replaceStage } from "../../../utils/common";
 
 // components
@@ -14,7 +16,10 @@ import Iconify from '../../../components/iconify';
 
 export default function LoginForm() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClick = () => {
@@ -22,20 +27,56 @@ export default function LoginForm() {
   };
 
   const onClickLogin = () => {
-    requests.get('/contents/hotel')
-    // console.log(window);
-    // console.log(getConfig("SUCCESS_API"));
+    if(!userId || !password){
+      Alert.info("아이디 또는 비밀번호를 정확히 입력해주세요.")
+      return;
+    }
+
+    dispatch({
+      type: LOGIN,
+      payload: agent.User.login( userId, password),
+      redirect: true,
+      userId
+    }).then(res => {
+      console.log('&&&&&&',res);
+    });
+
+    // agent.User.login(userId, password).then( (res) => {
+    //   if (res.data.code === '0000') {
+    //     const {result} = res.data
+    //     console.log(result);
+    //     navigate('/home', { replace: true });
+    //   }
+    //   else {
+    //     Alert.info(res.data.message)
+    //   }
+    // })
+  }
+
+  const onChangeValue = (e, type) => {
+    const {value} = e.target;
+    const valueMap = { userId, password}
+    
+    if(value === '' || valueMap[type] === value) return;
+
+    if(type === 'userId'){
+      setUserId(value);
+    }
+    else if( type === 'password'){
+      setPassword(value);
+    }
   }
 
   return (
-    <>
+    <> 
       <Stack spacing={3}>
-        <TextField name="email" label="아이디" />
+        <TextField name="email" label="아이디"  onBlur={ (e) => onChangeValue( e, 'userId' ) }/>
 
         <TextField
           name="password"
           label="비밀번호"
           type={showPassword ? 'text' : 'password'}
+          onBlur={ (e) => onChangeValue( e, 'password' ) }
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
