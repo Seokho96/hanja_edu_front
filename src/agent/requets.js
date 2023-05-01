@@ -1,4 +1,5 @@
 import axios from 'axios'
+import agent from '.';
 
 const instance = axios.create({
   baseURL: `${process.env.REACT_APP_SERVER  }/api`,
@@ -29,9 +30,11 @@ instance.interceptors.request.use(
     //   config.headers['Authorization'] = grantType + ' ' + accessToken
     // }
 
-    const token = window.sessionStorage.getItem("accessToken");
-    const grantType = window.sessionStorage.getItem("grantType");
+    const {grantType, accessToken:token} = agent.getSessionInfo()
+    console.log(`${grantType  } ${  token}` )
+
   if (token) {
+    console.log(`${grantType  } ${  token}` )
     config.headers.Authorization = `${grantType  } ${  token}`
   }
      return config 
