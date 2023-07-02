@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRef, useState } from 'react';
+import { Form, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 // @mui
 import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox, FormControlLabel } from '@mui/material';
@@ -17,7 +17,7 @@ import Iconify from '../../../components/iconify';
 export default function LoginForm() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const formRef = useRef(null);
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -25,7 +25,21 @@ export default function LoginForm() {
   const handleClick = () => {
     navigate('/home', { replace: true });
   };
+  const onClickLogin2 = (e) => {
+    e.preventDefault()
+    // debugger
+    console.log('sss');
+    const {files} = formRef.current 
+    const formData = new FormData();
+    formData.append('file', files[0]);
+    agent.User.insertUsersByExcel(formData).then( response => {
+      console.log(response);
+      
+    });
+   
+    console.log(formData);
 
+  }
   const onClickLogin = () => {
     if(!userId || !password){
       Alert.info("아이디 또는 비밀번호를 정확히 입력해주세요.")
@@ -87,6 +101,10 @@ export default function LoginForm() {
             ),
           }}
         />
+        <form onSubmit={onClickLogin2}>
+          <input  ref={formRef} name='file' type='file' label='파일' />
+          <button type='submit'>테스트</button>
+        </form>
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>

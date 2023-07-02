@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 // @mui
 import { Box, Card, Link, Typography, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router';
 // utils
 import { fCurrency } from '../../../utils/formatNumber';
 // components
@@ -25,7 +26,12 @@ ShopProductCard.propTypes = {
 };
 
 export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale } = product;
+  const { name, cover } = product;
+  const navigate = useNavigate();
+
+  const onClickLevel = ( level ) => {
+    navigate('/')
+  }
 
   return (
     <Link color="inherit" underline="hover" style={{ cursor:'pointer' }}>

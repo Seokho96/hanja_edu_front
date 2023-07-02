@@ -29,13 +29,19 @@ instance.interceptors.request.use(
     // if (users.getUserInfo?.accessToken) {
     //   config.headers['Authorization'] = grantType + ' ' + accessToken
     // }
-
-    const {grantType, accessToken:token} = agent.getSessionInfo()
-    console.log(`${grantType  } ${  token}` )
+    console.log(config);
+    const {grantType, accessToken:token} = agent.getSessionInfo() ?? {grantType:'',accessToken:''}
 
   if (token) {
     console.log(`${grantType  } ${  token}` )
     config.headers.Authorization = `${grantType  } ${  token}`
+  }
+
+  if(config.url.indexOf('excel') !== -1){
+    config.headers.enctype = 'multipart/form-data'
+    config.headers.encoding = 'multipart/form-data'
+    config.headers['Content-Type']="application/x-www-form-urlencoded;charset=UTF-8"
+    
   }
      return config 
     }

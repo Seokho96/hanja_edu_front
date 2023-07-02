@@ -33,13 +33,12 @@ export default function DashboardAppPage() {
     const {userSeq} = agent.getSessionInfo()
     // agent.Quiz.test();
     agent.User.getUserInfo(userSeq).then( response => {
-      console.log(response);
       const { studentInfo, schoolInfo } = response.data.result;
       let info = {...studentInfo};
       info = {...info, ...schoolInfo};
-    console.log(info);
+      const levelName = (String(info.level).substring(1,2) === '2' ? '준 ' : '' )+String( info.level).substring(0,1)
 
-      setUserInfo({...info});
+      setUserInfo({...info, levelName});
     });
   }
 
@@ -74,7 +73,7 @@ export default function DashboardAppPage() {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="급수" value={`${userInfo.level ?? ''}급`} color="warning" icon={'level'} />
+            <AppWidgetSummary title="급수" value={`${userInfo.levelName ?? ''}급`} color="warning" icon={'level'} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>

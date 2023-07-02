@@ -20,7 +20,7 @@ export default function Router() {
       children: [
         { element: <Navigate to="/level" />, index: true },
         { path: 'home', element: <DashboardAppPage /> },
-        { path: 'user', element: <UserPage /> },
+        { path: 'user', element: <UserPage />,  },
         { path: 'level', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
         {path:'quiz', element:<QuizPage />}
@@ -34,7 +34,7 @@ export default function Router() {
       path:"error",
       element: <SimpleLayout />,
       children: [
-        { element: <Navigate to="/home" />, index: true },
+        { element: <Navigate to="/login" />, index: true },
         { path: '404', element: <Page404 /> },
         { path: '*', element: <Navigate to="/404" /> },
       ],

@@ -1,11 +1,13 @@
 import Quiz from "./quiz";
 import User from "./user";
+import Chapter from "./chapter";
 
 
 export default {
   Quiz,
   User,
-
+  Chapter,
+  
   getSessionInfo: () => {
     const info = {};
     // let key = "";
