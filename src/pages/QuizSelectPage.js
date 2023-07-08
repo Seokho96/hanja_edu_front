@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams  } from 'react-router-dom';
 
 // @mui
 import {
@@ -34,9 +34,11 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
+import Alert from '../utils/Alert';
 
 
 // ----------------------------------------------------------------------
+
 const USERLIST = {
   selHanja : [
     { id:'1', name:'첫째방',contents:[ '百 千 手 足 自 立 石' ] },
@@ -95,6 +97,9 @@ function applySortFilter(array, comparator, query) {
 
 export default function UserPage() {
 
+  const { level } = useParams();
+
+
   const [value, setValue] = useState(0);
 
   const [open, setOpen] = useState(null);
@@ -114,6 +119,17 @@ export default function UserPage() {
   const [selectTab, setSelectTab] = useState('sel');  // sel : 선정한자 , book: 교과서한자 , ancient: 고사성어
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if(level){
+      console.log(level);
+      const numberCheck = /^[0-9]+$/; 
+      if( !numberCheck.test(level) || (String(level)).length > 1 ){
+        Alert.info('잘못된 접근입니다.')
+        navigate('/level', { replace: true });
+      }
+    }
+})
 
   const handleChange = (event, newValue) => {
    if( newValue !== selectTab) setSelectTab(newValue)

@@ -4,10 +4,10 @@ import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
 import BlogPage from './pages/BlogPage';
-import UserPage from './pages/UserPage';
+import QuizSelectPage from './pages/QuizSelectPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
-import ProductsPage from './pages/ProductsPage';
+import LevelPage from './pages/LevelPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import QuizPage from './pages/QuizPage';
 // ----------------------------------------------------------------------
@@ -20,8 +20,8 @@ export default function Router() {
       children: [
         { element: <Navigate to="/level" />, index: true },
         { path: 'home', element: <DashboardAppPage /> },
-        { path: 'user', element: <UserPage />,  },
-        { path: 'level', element: <ProductsPage /> },
+        { path: 'level', element: <LevelPage /> },
+        { path: 'level/:level', element: <QuizSelectPage /> },
         { path: 'blog', element: <BlogPage /> },
         {path:'quiz', element:<QuizPage />}
       ],
