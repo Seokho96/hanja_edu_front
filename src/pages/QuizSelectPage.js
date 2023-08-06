@@ -35,22 +35,23 @@ import Scrollbar from '../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import Alert from '../utils/Alert';
+import agent from '../agent';
 
 
 // ----------------------------------------------------------------------
 
 const USERLIST = {
-  selHanja : [
+  A : [
     { id:'1', name:'첫째방',contents:[ '百 千 手 足 自 立 石' ] },
     { id:'2', name:'둘째방',contents:['生 心 出 入 工 力 川' ] },
     { id:'3', name:'셋째방',contents:['男 兄 金 天 江 目']  },
   ],
-  bookHanja:[
+  B:[
     { id:'1', name:'첫째방',contents:[ '학습, 학년, 선심, 정직, 활동', '규칙, 교실, 안전, 준비, 자세', '중요, 정리, 정확, 체육'] },
     { id:'2', name:'둘째방',contents:['발음, 질문, 분명, 시, 문법', '상상, 장면, 실감, 체험, 역할, 민속' ] },
     { id:'3', name:'셋째방',contents:['모형, 배열, 삼각형, 원, 부호', '신호, 변, 계산, 시계, 계획','시간, 식, 오전, 오후, 선','방법, 환경, 자연']  },
   ],
-  ancientHanja:[
+  C:[
     { id:'1', name:'첫째방',contents:[ '他山之石, 百發百中'] },
     { id:'2', name:'둘째방',contents:['作心三日, 男女老少' ] },
     { id:'3', name:'셋째방',contents:['此日彼日, 杜門不出']  },
@@ -65,6 +66,8 @@ const TABLE_HEAD = [
 ];
 
 // ----------------------------------------------------------------------
+
+
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -116,20 +119,34 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [selectTab, setSelectTab] = useState('sel');  // sel : 선정한자 , book: 교과서한자 , ancient: 고사성어
+  const [selectTab, setSelectTab] = useState('');  // sel : 선정한자 , book: 교과서한자 , ancient: 고사성어
 
+  const [tabs, setTabs] = useState([])
   const navigate = useNavigate();
 
   useEffect(() => {
     if(level){
       console.log(level);
+      getTabMenu()
       const numberCheck = /^[0-9]+$/; 
       if( !numberCheck.test(level) || (String(level)).length > 1 ){
         Alert.info('잘못된 접근입니다.')
         navigate('/level', { replace: true });
       }
     }
-})
+},[])
+
+useEffect(() => {
+  
+},[selectTab])
+
+const getTabMenu = () => {
+    // agent.Quiz.test();
+    agent.Common.getCommonCode({codeGubun: 'CHAPTER'}).then( response => {
+      setTabs([...response.data.result])
+      setSelectTab(response.data.result[0].code)
+    });
+}
 
   const handleChange = (event, newValue) => {
    if( newValue !== selectTab) setSelectTab(newValue)
@@ -213,10 +230,13 @@ export default function UserPage() {
           </Button>
         </Stack> */}
         <Tabs value={selectTab} onChange={handleChange} aria-label="disabled tabs example">
-          <Tab label="선정한자" value="sel"/>
+        {tabs.map((tab) => (
+           <Tab label={tab.codeName} value={tab.code} key={tab.code}/>
+        ))}
+          {/* <Tab label="선정한자" value="sel" />
           <Tab label="교과서한자" value="book"/>
           <Tab label="고사성어" value="ancient"/>
-          <Tab label="연습문제" disabled />
+          <Tab label="연습문제" disabled /> */}
         </Tabs>
 
         <Card>
@@ -238,7 +258,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                 {
-                    USERLIST[`${selectTab}Hanja`]?.map( (row, idx) => {
+                    USERLIST[`${selectTab}`]?.map( (row, idx) => {
                     const { id, name, contents } = row;
                         return(
                           <TableRow  key={id} tabIndex={-1} >

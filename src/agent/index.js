@@ -1,12 +1,14 @@
 import Quiz from "./quiz";
 import User from "./user";
 import Chapter from "./chapter";
+import Common from "./common";
 
 
 export default {
   Quiz,
   User,
   Chapter,
+  Common,
   
   getSessionInfo: () => {
     const info = {};
