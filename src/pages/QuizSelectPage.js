@@ -119,7 +119,7 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [selectTab, setSelectTab] = useState('');  // sel : 선정한자 , book: 교과서한자 , ancient: 고사성어
+  const [selectTab, setSelectTab] = useState('A');  // sel : 선정한자 , book: 교과서한자 , ancient: 고사성어
 
   const [tabs, setTabs] = useState([])
   const navigate = useNavigate();
@@ -128,6 +128,7 @@ export default function UserPage() {
     if(level){
       console.log(level);
       getTabMenu()
+      getChapterDetail()
       const numberCheck = /^[0-9]+$/; 
       if( !numberCheck.test(level) || (String(level)).length > 1 ){
         Alert.info('잘못된 접근입니다.')
@@ -146,6 +147,13 @@ const getTabMenu = () => {
       setTabs([...response.data.result])
       setSelectTab(response.data.result[0].code)
     });
+}
+
+const getChapterDetail = () => {
+  // agent.Quiz.test();
+  agent.Chapter.getChaptetDetail({level: 81, chapStudyTypeCode: selectTab}).then( response => {
+    console.log(response);
+  });
 }
 
   const handleChange = (event, newValue) => {
