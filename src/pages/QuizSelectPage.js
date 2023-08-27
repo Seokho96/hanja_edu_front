@@ -39,7 +39,6 @@ import agent from '../agent';
 
 
 // ----------------------------------------------------------------------
-
 const USERLIST = {
   A : [
     { id:'1', name:'첫째방',contents:[ '百 千 手 足 自 立 石' ] },
@@ -119,7 +118,10 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [selectTab, setSelectTab] = useState('A');  // sel : 선정한자 , book: 교과서한자 , ancient: 고사성어
+  const [selectTab, setSelectTab] = useState('B');  // sel : 선정한자 , book: 교과서한자 , ancient: 고사성어
+  
+const [ chapterDetail, setChapterDetail ] = useState({})
+
 
   const [tabs, setTabs] = useState([])
   const navigate = useNavigate();
@@ -129,11 +131,6 @@ export default function UserPage() {
       console.log(level);
       getTabMenu()
       getChapterDetail()
-      const numberCheck = /^[0-9]+$/; 
-      if( !numberCheck.test(level) || (String(level)).length > 1 ){
-        Alert.info('잘못된 접근입니다.')
-        navigate('/level', { replace: true });
-      }
     }
 },[])
 
@@ -151,8 +148,21 @@ const getTabMenu = () => {
 
 const getChapterDetail = () => {
   // agent.Quiz.test();
-  agent.Chapter.getChaptetDetail({level: 81, chapStudyTypeCode: selectTab}).then( response => {
+  agent.Chapter.getChaptetDetail({level, chapStudyTypeCode: selectTab}).then( response => {
     console.log(response);
+    // let resChapterDetail = {...chapterDetail}
+    // resChapterDetail[selectTab]= response.data.result
+    const resChapterDetail = []
+    response.data.result.forEach( item => {
+      let findIndex = resChapterDetail.findIndex(findItem => findItem.chapCode === item.chapCode)
+      if(findIndex === -1){
+        resChapterDetail.push({ chapCode: item.chapCode, contents:[]})
+        findIndex = resChapterDetail.length - 1
+      }
+      resChapterDetail[findIndex].contents.push({chapDisplay: item.chapDisplay, quizFistCode: `${level}0${item.sort}`})
+    })
+    console.log('resChapterDetail',resChapterDetail);
+    setChapterDetail(resChapterDetail)
   });
 }
 
@@ -280,7 +290,7 @@ const getChapterDetail = () => {
                             <Stack direction="row"  spacing={2}>
                               {/* <Avatar alt={name} src={avatarUrl} /> */}
                               <Typography  variant="subtitle2" noWrap>
-                               { name }
+                               { idx + 1 }
                               </Typography>
                             </Stack>
                           </TableCell>

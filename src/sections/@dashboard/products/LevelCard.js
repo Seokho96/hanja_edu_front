@@ -26,7 +26,7 @@ LevelCard.propTypes = {
 };
 
 export default function LevelCard({ product }) {
-  const { level, cover } = product;
+  const { level, cover, levelName } = product;
   const navigate = useNavigate();
 
   const onClickLevel = ( level ) => {
@@ -43,7 +43,7 @@ export default function LevelCard({ product }) {
       <Stack spacing={2} sx={{ p: 3 }}>
         
           <Typography variant="subtitle2" noWrap style={{textAlign:'center'}}>
-            <b >{level}급</b>
+            <b >{levelName}</b>
           </Typography>
       </Stack>
     </Card>
