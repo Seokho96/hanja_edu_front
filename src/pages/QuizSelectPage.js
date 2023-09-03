@@ -118,9 +118,9 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [selectTab, setSelectTab] = useState('B');  // sel : 선정한자 , book: 교과서한자 , ancient: 고사성어
+  const [selectTab, setSelectTab] = useState('A');  // sel : 선정한자 , book: 교과서한자 , ancient: 고사성어
   
-const [ chapterDetail, setChapterDetail ] = useState({})
+const [ chapterDetail, setChapterDetail ] = useState([])
 
 
   const [tabs, setTabs] = useState([])
@@ -128,18 +128,16 @@ const [ chapterDetail, setChapterDetail ] = useState({})
 
   useEffect(() => {
     if(level){
-      console.log(level);
       getTabMenu()
       getChapterDetail()
     }
 },[])
 
 useEffect(() => {
-  
+  getChapterDetail()
 },[selectTab])
 
 const getTabMenu = () => {
-    // agent.Quiz.test();
     agent.Common.getCommonCode({codeGubun: 'CHAPTER'}).then( response => {
       setTabs([...response.data.result])
       setSelectTab(response.data.result[0].code)
@@ -149,9 +147,6 @@ const getTabMenu = () => {
 const getChapterDetail = () => {
   // agent.Quiz.test();
   agent.Chapter.getChaptetDetail({level, chapStudyTypeCode: selectTab}).then( response => {
-    console.log(response);
-    // let resChapterDetail = {...chapterDetail}
-    // resChapterDetail[selectTab]= response.data.result
     const resChapterDetail = []
     response.data.result.forEach( item => {
       let findIndex = resChapterDetail.findIndex(findItem => findItem.chapCode === item.chapCode)
@@ -161,6 +156,7 @@ const getChapterDetail = () => {
       }
       resChapterDetail[findIndex].contents.push({chapDisplay: item.chapDisplay, quizFistCode: `${level}0${item.sort}`})
     })
+
     console.log('resChapterDetail',resChapterDetail);
     setChapterDetail(resChapterDetail)
   });
@@ -251,10 +247,6 @@ const getChapterDetail = () => {
         {tabs.map((tab) => (
            <Tab label={tab.codeName} value={tab.code} key={tab.code}/>
         ))}
-          {/* <Tab label="선정한자" value="sel" />
-          <Tab label="교과서한자" value="book"/>
-          <Tab label="고사성어" value="ancient"/>
-          <Tab label="연습문제" disabled /> */}
         </Tabs>
 
         <Card>
@@ -264,7 +256,7 @@ const getChapterDetail = () => {
           <Scrollbar>
             <TableContainer sx={{ minWidth: 300, maxWidth:800 }}>
               <Table>
-                <UserListHead
+                {/* <UserListHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
@@ -273,22 +265,16 @@ const getChapterDetail = () => {
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
-                />
+                /> */}
                 <TableBody>
                 {
-                    USERLIST[`${selectTab}`]?.map( (row, idx) => {
-                    const { id, name, contents } = row;
+                   chapterDetail?.map( (row, idx) => {
+                    const { chapCode, contents } = row;
                         return(
-                          <TableRow  key={id} tabIndex={-1} >
-                        {/* <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
-                        </TableCell> */}
-
-                        
+                          <TableRow  key={chapCode} tabIndex={-1} >                      
                           
                             <TableCell component="th" align='center' scope="row" padding="none" >
                             <Stack direction="row"  spacing={2}>
-                              {/* <Avatar alt={name} src={avatarUrl} /> */}
                               <Typography  variant="subtitle2" noWrap>
                                { idx + 1 }
                               </Typography>
@@ -299,12 +285,12 @@ const getChapterDetail = () => {
 
                         <TableCell  align="left">
                         {
-                          row.contents.map(  (cont, idx) => 
-                              <Stack direction="row" key={idx} style={{borderBottom: '1px solid black'}} spacing={2}>
+                          contents.map(  (cont, idx) => 
+                              <Stack direction="row" key={cont.chapDisplay} style={{borderBottom: '1px solid black'}} spacing={2}>
                               {/* <Avatar alt={name} src={avatarUrl} /> */}
                               <Typography variant="subtitle2" onClick={()=>onClickContents()}
                               noWrap fontSize="1.2rem" fontWeight="bold">
-                              <br/> &nbsp;&nbsp;<span  style={{cursor:'pointer'}} >{cont}</span><br/><br/>
+                              <br/> &nbsp;&nbsp;<span  style={{cursor:'pointer'}} >{cont.chapDisplay}</span><br/><br/>
                               </Typography>
                             </Stack>
                             
@@ -312,66 +298,11 @@ const getChapterDetail = () => {
                         }
                             
                         </TableCell>
-
-                        {/* <TableCell align="left">{role}</TableCell>
-
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
-
-                        <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
-                        </TableCell> */}
-
-                        {/* <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
-                        </TableCell> */}
                       </TableRow>
                         )
                     } )
                   }
                  
-                  {/* {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, idx) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
-
-                    return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
-                        </TableCell>
-
-                        
-                          
-                            <TableCell component="th" scope="row" padding="none" >
-                            <Stack direction="row" alignItems="center" spacing={2}>
-                              <Avatar alt={name} src={avatarUrl} />
-                              <Typography variant="subtitle2" noWrap>
-                                &nbsp;&nbsp;{ name }
-                              </Typography>
-                            </Stack>
-                          </TableCell>
-                          
-                        
-
-                        <TableCell align="left">{company}</TableCell>
-
-                        <TableCell align="left">{role}</TableCell>
-
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
-
-                        <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
-                        </TableCell>
-
-                        <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })} */}
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
