@@ -18,17 +18,18 @@ export default function Router() {
       path: '/',
       element: <DashboardLayout />,
       children: [
-        { element: <Navigate to="/level" />, index: true },
+        { element: <Navigate to="/level" /> },
         { path: 'home', element: <DashboardAppPage /> },
         { path: 'level', element: <LevelPage /> },
         { path: 'level/:level', element: <QuizSelectPage /> },
         { path: 'blog', element: <BlogPage /> },
-        {path:'quiz', element:<QuizPage />}
+        {path:'quiz/:chapCode', element:<QuizPage />}
       ],
     },
     {
       path: 'login',
       element: <LoginPage />,
+      index: true
     },
     {
       path:"error",
@@ -41,7 +42,7 @@ export default function Router() {
     },
     {
       path: '*',
-      element: <Navigate to="/404" replace />,
+      element: <Navigate to="/error/404" replace />,
     },
   ]);
 

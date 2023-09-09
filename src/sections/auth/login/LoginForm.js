@@ -48,7 +48,7 @@ export default function LoginForm() {
 
     dispatch({
       type: LOGIN,
-      payload: agent.User.login( userId, password),
+      payload: agent.User.login( userId, password.replaceAll('-','')),
       redirect: true,
       userId
     }).then(res => {
