@@ -2,6 +2,8 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
+import { useNavigate  } from 'react-router-dom';
+
 // @mui
 import {
   Card,
@@ -24,6 +26,8 @@ import Alert from '../utils/Alert';
 export default function UserPage() {
 
   const { chapCode } = useParams();
+  const navigate = useNavigate();
+
 
 const [value, setValue] = useState('');
 const [quizDetail, setQuizDetail] = useState({ quizList:[{}]})
@@ -56,10 +60,16 @@ const getQuizList = () =>{
     }
    };
 
-   const handleClickNext=()=>{
+   const handleClickNext=( index )=>{
     quizDetail.quizList[quizNum].chioceAnswer = value
-    if(quizDetail.quizList[quizNum].chapAnswer !== value){
-      Alert.info('틀렸습니다')
+    // if(quizDetail.quizList[quizNum].chapAnswer !== value){
+    //   Alert.info('틀렸습니다')
+    //   return
+    // }
+    if(quizNum === (quizDetail.quizList.length - 1) ){
+      Alert.info('대단해요! 모든 문제를 맞췄어요!', () =>{
+        navigate(`/level`)
+      })
       return
     }
       setQuizNum(quizNum+1)

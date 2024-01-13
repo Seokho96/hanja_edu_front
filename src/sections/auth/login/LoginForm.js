@@ -32,7 +32,7 @@ export default function LoginForm() {
     const {files} = formRef.current 
     const formData = new FormData();
     formData.append('file', files[0]);
-    agent.User.insertUsersByExcel(formData).then( response => {
+    agent.Quiz. insertQuizByExcel(formData).then( response => {
       console.log(response);
       
     });
