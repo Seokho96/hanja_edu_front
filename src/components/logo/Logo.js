@@ -36,7 +36,7 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
         ...sx,
       }}
       {...other}
-    > <h2>부개초등학교</h2>
+    > <h2>방과후 한자수업</h2>
       {/* <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 512 512">
         <defs>
           <linearGradient id="BG1" x1="100%" x2="50%" y1="9.946%" y2="50%">

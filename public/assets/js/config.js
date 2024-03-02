@@ -16,5 +16,5 @@ if (window.location.host.indexOf("gplatform.co.kr") !== -1) {
 } else {
   // dev
   real = false;
-  SUCCESS_API = "http://localhost:8080";
+  SUCCESS_API = "https://52.78.30.127:8081";
 }

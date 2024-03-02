@@ -101,10 +101,10 @@ export default function LoginForm() {
             ),
           }}
         />
-        <form onSubmit={onClickLogin2}>
+        {/* <form onSubmit={onClickLogin2}>
           <input  ref={formRef} name='file' type='file' label='파일' />
           <button type='submit'>테스트</button>
-        </form>
+        </form> */}
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
